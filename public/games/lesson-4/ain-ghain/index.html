@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ميّزي الكلمات - لعبة تعليمية</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@500;600;700;800&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --blue:#168bd2;--green:#1cad4f;--red:#e5242a;--sand:#f6d695;--brown:#8a4a15;
+}
+body{
+  font-family:"Cairo",Tahoma,sans-serif;
+  min-height:100vh;
+  background:
+    radial-gradient(circle at 15% 20%,rgba(255,255,255,.8) 0 3%,transparent 3.2%),
+    linear-gradient(#49c4ff 0 34%,#d8f7ff 34% 47%,#88cf4f 47% 70%,#f3c875 70%);
+  color:#2d1b12;overflow-x:hidden;user-select:none;
+}
+.game{max-width:920px;margin:auto;min-height:100vh;padding:12px 14px 18px;position:relative}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.pill{
+  border:0;border-radius:18px;padding:9px 16px;font:700 14px Cairo;color:#fff;
+  cursor:pointer;box-shadow:0 4px 0 rgba(0,0,0,.18);background:linear-gradient(#28a2e9,#0877bd)
+}
+.status{display:flex;align-items:center;gap:10px;background:#9a4c17;color:#fff;border:3px solid #fff4d6;
+  border-radius:16px;padding:5px 10px;box-shadow:0 4px 0 rgba(91,42,7,.35)}
+.star{font-size:24px}.score{font-weight:800}.levelBox{font-size:13px;font-weight:800}
+.progressTrack{width:72px;height:8px;background:#6d2d0d;border-radius:20px;overflow:hidden;border:1px solid #fff}
+.progressFill{height:100%;background:#45d34e;width:20%;transition:.3s}
+.sign{
+  width:max-content;max-width:92%;margin:14px auto 10px;padding:8px 34px;
+  background:linear-gradient(#ffe598,#f6b955);border:4px solid #9a551d;border-radius:18px;
+  font-size:30px;font-weight:800;box-shadow:0 5px 0 #7e4015;position:relative
+}
+.instruction{
+  background:#fff4dc;border:3px solid #efc077;border-radius:18px;padding:11px 18px;margin:10px auto 14px;
+  max-width:760px;text-align:center;font-size:17px;font-weight:700;line-height:1.8
+}
+.red{color:var(--red)}.green{color:#178f31}
+.scene{display:grid;grid-template-columns:150px 1fr;gap:16px;align-items:end;max-width:760px;margin:auto}
+.crowWrap{text-align:center;align-self:end}
+.crow{
+  font-size:92px;filter:drop-shadow(0 8px 4px rgba(0,0,0,.25));
+  animation:bob 2s ease-in-out infinite;cursor:pointer
+}
+@keyframes bob{50%{transform:translateY(-8px) rotate(2deg)}}
+.pots{display:flex;justify-content:center;gap:28px;align-items:end}
+.pot{
+  width:185px;height:185px;position:relative;cursor:pointer;
+  background:linear-gradient(90deg,#b9601c,#e88e37 25%,#c76b22 65%,#984411);
+  border:4px solid #8c3e0f;border-radius:20px 20px 38% 38%;
+  box-shadow:inset 0 -18px 20px rgba(90,30,0,.28),0 12px 15px rgba(0,0,0,.2);
+  transition:.18s
+}
+.pot:before{
+  content:"";position:absolute;left:-9px;right:-9px;top:-13px;height:30px;border-radius:50%;
+  background:linear-gradient(#eea14c,#b95c1b);border:4px solid #8c3e0f
+}
+.pot.highlight{transform:scale(1.05);box-shadow:0 0 0 6px #ffe456,0 12px 15px rgba(0,0,0,.2)}
+.letter{
+  width:76px;height:62px;background:#fff8e9;border-radius:12px;position:absolute;top:30px;left:50%;transform:translateX(-50%);
+  display:flex;align-items:center;justify-content:center;font-size:46px;font-weight:800;box-shadow:0 3px 7px #6c2f10aa
+}
+.dropzone{
+  position:absolute;left:17px;right:17px;bottom:18px;min-height:65px;border:2px dashed #fff5;
+  background:#fff2;border-radius:12px;padding:5px;display:flex;flex-wrap:wrap;gap:4px;align-content:flex-start;justify-content:center
+}
+.mini{
+  background:#fffdf8;border-radius:8px;padding:2px 7px;font-size:12px;font-weight:800;cursor:pointer;
+  box-shadow:0 2px 4px #0003
+}
+.words{max-width:720px;margin:18px auto 10px;display:flex;flex-wrap:wrap;justify-content:center;gap:12px}
+.word{flex:0 0 190px;max-width:190px;background:linear-gradient(#fffaf1,#f4d5a6);border:2px solid #d69a4c;border-radius:14px;
+  padding:13px 7px;font:800 21px Cairo;color:#34170f;cursor:grab;box-shadow:0 5px 0 #a36a31;
+  transition:.15s;touch-action:none
+}
+.word:hover{transform:translateY(-2px)}.word.selected{outline:5px solid #4aa8ff;transform:scale(1.04)}
+.word.placed{opacity:.28;pointer-events:none}.word.correct{background:#c7f4ce;border-color:#31aa49}
+.word.wrong{background:#ffd0d0;border-color:#e73333;animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-7px)}50%{transform:translateX(7px)}75%{transform:translateX(-5px)}}
+.controls{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:18px}
+.control{border:0;border-radius:20px;padding:11px 18px;color:#fff;font:800 15px Cairo;cursor:pointer;box-shadow:0 4px 0 rgba(0,0,0,.18)}
+.retry{background:#168bd2}.sound{background:#707b86}.check{background:#1cad4f;font-size:17px}
+.overlay{
+  position:fixed;inset:0;background:#0007;display:none;align-items:center;justify-content:center;padding:18px;z-index:1000
+}
+.overlay.show{display:flex}.modal{
+  width:min(480px,96vw);background:#fffdf8;border-radius:24px;text-align:center;padding:25px 20px;box-shadow:0 20px 60px #0006
+}
+.modal h2{font-size:30px;margin-bottom:8px}.modal p{font-size:17px;line-height:1.8}.stars{font-size:42px;margin:8px}
+.modalActions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:16px}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(30px);opacity:0;
+  background:#2e2e2e;color:#fff;border-radius:18px;padding:10px 18px;transition:.25s;z-index:2000}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.confetti{position:fixed;top:-20px;width:10px;height:10px;z-index:1500;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(105vh) rotate(720deg);opacity:.2}}
+@media(max-width:650px){
+  .game{padding:8px}.sign{font-size:23px;padding:7px 24px}.instruction{font-size:14px}
+  .scene{grid-template-columns:80px 1fr;gap:7px}.crow{font-size:62px}.pots{gap:10px}
+  .pot{width:125px;height:150px}.letter{width:58px;height:50px;font-size:35px;top:25px}
+  .dropzone{left:9px;right:9px;bottom:12px;min-height:58px}.words{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}.word{flex:0 0 calc(50% - 10px);max-width:190px}
+  .word{font-size:18px;padding:10px 5px}.status{padding:4px 7px}.pill{padding:8px 11px;font-size:12px}
+}
+</style>
+</head>
+<body>
+<div class="game">
+  <div class="topbar">
+    <button class="pill" onclick="goBack()">🏠 العودة للدرس</button>
+    <div class="status">
+      <span class="star">⭐</span><span class="score" id="score">0</span>
+      <div class="levelBox"><div id="levelText">0/8</div><div class="progressTrack"><div class="progressFill" id="progressFill"></div></div></div>
+    </div>
+  </div>
+
+  <div class="sign" id="gameTitle">ميّزي الكلمات</div>
+  <div class="instruction" id="instruction"></div>
+
+  <div class="scene">
+    <div class="crowWrap">
+      <div class="crow" onclick="speakInstruction()" title="انقري لسماع التعليمات">🐦‍⬛</div>
+    </div>
+    <div class="pots">
+      <div class="pot" id="potA" onclick="placeSelected('A')" ondragover="dragOver(event,'A')" ondragleave="dragLeave('A')" ondrop="dropWord(event,'A')">
+        <div class="letter red" id="letterA"></div><div class="dropzone" id="zoneA"></div>
+      </div>
+      <div class="pot" id="potB" onclick="placeSelected('B')" ondragover="dragOver(event,'B')" ondragleave="dragLeave('B')" ondrop="dropWord(event,'B')">
+        <div class="letter green" id="letterB"></div><div class="dropzone" id="zoneB"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="words" id="words"></div>
+
+  <div class="controls">
+    <button class="control retry" onclick="resetLevel()">↻ إعادة المحاولة</button>
+    <button class="control sound" id="soundBtn" onclick="toggleSound()">🔊 الأصوات مفعلة</button>
+    <button class="control check" onclick="checkAnswers()">✓ تحقق من الإجابة</button>
+  </div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h2 id="modalTitle"></h2>
+    <div class="stars" id="modalStars"></div>
+    <p id="modalText"></p>
+    <div class="modalActions" id="modalActions"></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const WORDS = [
+  ["أعلى","A"],
+  ["ارتفع","A"],
+  ["صنع","A"],
+  ["زرع","A"],
+  ["سعيد","A"],
+  ["صغيرة","B"],
+  ["غراب","B"],
+  ["فراغ","B"]
+];
+
+const LETTER_A = "ع";
+const LETTER_B = "غ";
+
+let placements = {};
+let selected = null;
+let soundOn = true;
+let locked = false;
+let score = 0;
+
+function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+
+function init(){
+  placements = {};
+  selected = null;
+  locked = false;
+  score = 0;
+
+  document.getElementById("letterA").textContent = LETTER_A;
+  document.getElementById("letterB").textContent = LETTER_B;
+  document.getElementById("levelText").textContent = `0/${WORDS.length}`;
+  document.getElementById("progressFill").style.width = "0%";
+  document.getElementById("score").textContent = "0";
+
+  document.getElementById("instruction").innerHTML =
+    `ميّزي الكلمات التي تحتوي على حرف <span class="red">(${LETTER_A})</span>، والكلمات التي تحتوي على حرف <span class="green">(${LETTER_B})</span>، ثم ضعي كل كلمة في الجرة الصحيحة.`;
+
+  ["zoneA","zoneB"].forEach(id => document.getElementById(id).innerHTML = "");
+
+  const box = document.getElementById("words");
+  box.innerHTML = "";
+
+  shuffle(WORDS.map((x,i)=>({x,i}))).forEach(({x,i})=>{
+    const b = document.createElement("button");
+    b.className = "word";
+    b.textContent = x[0];
+    b.dataset.i = i;
+    b.draggable = true;
+
+    b.onclick = () => selectWord(i,b);
+    b.ondblclick = () => speak(x[0]);
+    b.ondragstart = e => {
+      if (locked || placements[i]) {
+        e.preventDefault();
+        return;
+      }
+      e.dataTransfer.setData("text/plain", i);
+      selected = i;
+    };
+
+    box.appendChild(b);
+  });
+}
+
+function updateProgress(){
+  const placed = Object.keys(placements).length;
+  document.getElementById("levelText").textContent = `${placed}/${WORDS.length}`;
+  document.getElementById("progressFill").style.width = `${(placed/WORDS.length)*100}%`;
+}
+
+function wordButton(i){
+  return document.querySelector(`.word[data-i="${i}"]`);
+}
+
+function selectWord(i,b){
+  if(locked || placements[i]) return;
+
+  document.querySelectorAll(".word").forEach(x=>x.classList.remove("selected"));
+
+  if(selected === i){
+    selected = null;
+    return;
+  }
+
+  selected = i;
+  b.classList.add("selected");
+  speak(WORDS[i][0]);
+}
+
+function placeSelected(zone){
+  if(selected !== null) place(selected,zone);
+}
+
+function place(i,zone){
+  if(locked) return;
+
+  if(placements[i]) removePlaced(i,false);
+
+  placements[i] = zone;
+
+  const b = wordButton(i);
+  if(b){
+    b.classList.add("placed");
+    b.classList.remove("selected");
+  }
+
+  selected = null;
+  renderMini(i,zone);
+  updateProgress();
+  playDropSound();
+}
+
+function renderMini(i,zone){
+  const m = document.createElement("span");
+  m.className = "mini";
+  m.dataset.i = i;
+  m.textContent = WORDS[i][0];
+  m.title = "اضغطي لإعادة الكلمة";
+  m.onclick = e => {
+    e.stopPropagation();
+    removePlaced(i,true);
+  };
+  document.getElementById("zone"+zone).appendChild(m);
+}
+
+function removePlaced(i,returnFocus){
+  if(locked) return;
+
+  const m = document.querySelector(`.mini[data-i="${i}"]`);
+  if(m) m.remove();
+
+  delete placements[i];
+
+  const b = wordButton(i);
+  if(b) b.classList.remove("placed","correct","wrong");
+
+  updateProgress();
+
+  if(returnFocus){
+    showToast("يمكنك الآن وضع الكلمة في جرة أخرى");
+  }
+}
+
+function dragOver(e,z){
+  e.preventDefault();
+  if(!locked) document.getElementById("pot"+z).classList.add("highlight");
+}
+
+function dragLeave(z){
+  document.getElementById("pot"+z).classList.remove("highlight");
+}
+
+function dropWord(e,z){
+  e.preventDefault();
+  dragLeave(z);
+  if(locked) return;
+
+  const i = parseInt(e.dataTransfer.getData("text/plain"));
+  if(!Number.isNaN(i)) place(i,z);
+}
+
+function checkAnswers(){
+  if(locked) return;
+
+  const placedCount = Object.keys(placements).length;
+
+  if(placedCount < WORDS.length){
+    showToast(`ضعي جميع الكلمات أولاً (${placedCount}/${WORDS.length})`);
+    playErrorSound();
+    return;
+  }
+
+  let correct = 0;
+  const wrongIndexes = [];
+
+  WORDS.forEach((w,i)=>{
+    const ok = placements[i] === w[1];
+    const b = wordButton(i);
+
+    if(ok){
+      correct++;
+      if(b) b.classList.add("correct");
+    }else{
+      wrongIndexes.push(i);
+      if(b) b.classList.add("wrong");
+    }
+  });
+
+  score = correct * 10;
+  document.getElementById("score").textContent = score;
+
+  if(correct === WORDS.length){
+    locked = true;
+    celebrate();
+    showResult(true, correct);
+  }else{
+    playErrorSound();
+    showResult(false, correct, wrongIndexes);
+  }
+}
+
+function showResult(perfect,correct,wrongIndexes=[]){
+  document.getElementById("overlay").classList.add("show");
+  document.getElementById("modalTitle").textContent =
+    perfect ? "أحسنتِ! 🎉" : "حاولي مرة أخرى";
+
+  document.getElementById("modalStars").textContent =
+    perfect ? "⭐⭐⭐" : correct >= 6 ? "⭐⭐" : "⭐";
+
+  document.getElementById("modalText").textContent =
+    perfect
+      ? `رائع! لقد صنفتِ جميع الكلمات بشكل صحيح وحصلتِ على ${score} نقطة.`
+      : `أجبتِ على ${correct} من ${WORDS.length} بشكل صحيح. سنعيد الكلمات الخاطئة فقط لتصحيحها.`;
+
+  const a = document.getElementById("modalActions");
+
+  if(perfect){
+    a.innerHTML = `
+      <button class="control check" onclick="closeModal()">ممتاز</button>
+      <button class="control retry" onclick="resetGame()">إعادة النشاط</button>
+      <button class="control sound" onclick="goBack()">العودة للدرس</button>
+    `;
+  }else{
+    a.innerHTML = `
+      <button class="control retry" onclick='retryWrong(${JSON.stringify(wrongIndexes)})'>تصحيح الكلمات</button>
+      <button class="control sound" onclick="resetGame()">إعادة النشاط</button>
+    `;
+  }
+}
+
+function retryWrong(indexes){
+  closeModal();
+
+  indexes.forEach(i=>{
+    const m = document.querySelector(`.mini[data-i="${i}"]`);
+    if(m) m.remove();
+
+    delete placements[i];
+
+    const b = wordButton(i);
+    if(b) b.classList.remove("placed","wrong","correct");
+  });
+
+  document.querySelectorAll(".word").forEach(b=>b.classList.remove("correct","wrong"));
+  updateProgress();
+  showToast("أعدنا الكلمات الخاطئة فقط. جرّبي من جديد.");
+}
+
+function resetGame(){
+  closeModal();
+  init();
+}
+
+function closeModal(){
+  document.getElementById("overlay").classList.remove("show");
+}
+
+function toggleSound(){
+  soundOn = !soundOn;
+  document.getElementById("soundBtn").textContent =
+    soundOn ? "🔊 الأصوات مفعلة" : "🔇 الأصوات متوقفة";
+
+  if(soundOn) tone(700,.06);
+}
+
+function speak(text){
+  if(!soundOn || !("speechSynthesis" in window)) return;
+
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = "ar-SA";
+  u.rate = .82;
+  u.pitch = 1.05;
+  speechSynthesis.speak(u);
+}
+
+
+function playDropSound(){
+  if(!soundOn) return;
+  playSequence([
+    {f:520,d:.07,delay:0,type:"triangle",v:.08},
+    {f:700,d:.09,delay:75,type:"triangle",v:.07}
+  ]);
+}
+
+function playErrorSound(){
+  if(!soundOn) return;
+  playSequence([
+    {f:230,d:.10,delay:0,type:"sawtooth",v:.06},
+    {f:180,d:.14,delay:90,type:"sawtooth",v:.05}
+  ]);
+}
+
+function playSuccessSound(){
+  if(!soundOn) return;
+  playSequence([
+    {f:523,d:.10,delay:0,type:"sine",v:.06},
+    {f:659,d:.10,delay:100,type:"sine",v:.06},
+    {f:784,d:.14,delay:200,type:"sine",v:.07}
+  ]);
+}
+
+function playSequence(notes){
+  if(!soundOn) return;
+
+  notes.forEach(n=>{
+    setTimeout(()=>{
+      try{
+        const C = window.AudioContext || window.webkitAudioContext;
+        const c = new C();
+        const o = c.createOscillator();
+        const g = c.createGain();
+
+        o.frequency.value = n.f;
+        o.type = n.type || "sine";
+        g.gain.value = n.v || .06;
+
+        o.connect(g);
+        g.connect(c.destination);
+        o.start();
+
+        g.gain.exponentialRampToValueAtTime(.001,c.currentTime+n.d);
+        o.stop(c.currentTime+n.d);
+      }catch(e){}
+    }, n.delay || 0);
+  });
+}
+
+function speakInstruction(){
+  speak(document.getElementById("instruction").innerText);
+}
+
+function tone(freq,d){
+  if(!soundOn) return;
+
+  try{
+    const C = window.AudioContext || window.webkitAudioContext;
+    const c = new C();
+    const o = c.createOscillator();
+    const g = c.createGain();
+
+    o.frequency.value = freq;
+    o.type = "sine";
+    g.gain.value = .08;
+
+    o.connect(g);
+    g.connect(c.destination);
+    o.start();
+
+    g.gain.exponentialRampToValueAtTime(.001,c.currentTime+d);
+    o.stop(c.currentTime+d);
+  }catch(e){}
+}
+
+function celebrate(){
+  playSuccessSound();
+
+  for(let i=0;i<45;i++){
+    setTimeout(()=>{
+      const c=document.createElement("i");
+      c.className="confetti";
+      c.style.left=Math.random()*100+"vw";
+      c.style.background=["#f44336","#ffca28","#4caf50","#2196f3","#9c27b0"][Math.floor(Math.random()*5)];
+      c.style.animationDuration=(1.4+Math.random()*1.6)+"s";
+      document.body.appendChild(c);
+      setTimeout(()=>c.remove(),3300);
+    },i*25);
+  }
+}
+
+function showToast(t){
+  const x=document.getElementById("toast");
+  x.textContent=t;
+  x.classList.add("show");
+  clearTimeout(x._t);
+  x._t=setTimeout(()=>x.classList.remove("show"),2200);
+}
+
+function goBack(){
+  if(window.history.length>1) history.back();
+  else window.location.href = '/lesson/4/practice/games';
+}
+
+init();
+</script>
+</body>
+</html>

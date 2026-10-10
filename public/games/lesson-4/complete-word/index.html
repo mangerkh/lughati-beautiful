@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>أكملي الكلمة - لعبة تعليمية</title>
+<style>
+*{box-sizing:border-box}
+:root{
+  --blue:#2f9ee9;--green:#27b568;--orange:#f28a2e;--red:#e84848;
+  --cream:#fff7e8;--ink:#2d3342;
+}
+body{
+  margin:0;min-height:100vh;font-family:Tahoma,Arial,sans-serif;color:var(--ink);
+  background:
+    radial-gradient(circle at 10% 14%,rgba(255,255,255,.75) 0 3%,transparent 3.2%),
+    radial-gradient(circle at 88% 11%,rgba(255,255,255,.55) 0 2.5%,transparent 2.8%),
+    linear-gradient(#86d7ff 0 34%,#dff7ff 34% 49%,#99dd6d 49% 72%,#f4cf86 72%);
+}
+.game{max-width:1020px;margin:auto;min-height:100vh;padding:14px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.btn{
+  border:0;border-radius:18px;padding:11px 17px;color:#fff;font-weight:900;cursor:pointer;
+  box-shadow:0 5px 0 rgba(0,0,0,.17);font-family:Tahoma,Arial,sans-serif;transition:.15s
+}
+.btn:hover{transform:translateY(-2px)}
+.back{background:linear-gradient(#3ca9f1,#167dc5)}
+.retry{background:linear-gradient(#3ea9f2,#1b80c5)}
+.sound{background:linear-gradient(#7b8793,#606a74)}
+.status{
+  background:#874718;color:#fff;border:3px solid #fff0d2;border-radius:18px;
+  padding:9px 14px;font-weight:900
+}
+.title{
+  width:max-content;max-width:94%;margin:14px auto 8px;padding:10px 34px;
+  background:linear-gradient(#ffe89a,#f5b856);border:4px solid #99531d;border-radius:20px;
+  font-size:31px;font-weight:900;box-shadow:0 6px 0 #7b3d13
+}
+.instruction{
+  max-width:850px;margin:0 auto 18px;background:#fff5dc;border:3px solid #efc27b;
+  border-radius:20px;padding:12px 18px;text-align:center;font-size:18px;font-weight:800;line-height:1.8
+}
+.board{
+  max-width:930px;margin:auto;background:rgba(255,255,255,.95);border:3px solid #efbd77;
+  border-radius:28px;padding:20px;box-shadow:0 15px 38px #0002
+}
+.cards{
+  display:flex;flex-wrap:wrap;justify-content:center;gap:16px;
+}
+.card{
+  flex:0 0 270px;min-height:210px;background:linear-gradient(#fffefb,#fff8ed);
+  border:3px solid #f1c38a;border-radius:22px;padding:18px;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  box-shadow:0 7px 0 #c9985a33;transition:.2s
+}
+.word{
+  font-size:38px;font-weight:900;margin-bottom:18px;color:#222a39;letter-spacing:1px;
+}
+.blank{
+  display:inline-block;min-width:42px;border-bottom:4px solid #344054;
+  margin:0 3px;text-align:center;color:#d65721
+}
+.options{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.option{
+  min-width:58px;height:56px;border:2px solid #bfd0e4;border-radius:14px;background:#fff;
+  font-size:25px;font-weight:900;color:#283243;cursor:pointer;
+  box-shadow:0 3px 0 #0001;transition:.15s
+}
+.option:hover{transform:translateY(-2px);border-color:#4aa8ed}
+.option.good{background:#dff7e6;border-color:#35b85f;color:#176b37;animation:pop .3s}
+.option.bad{background:#ffe0e0;border-color:#df3d3d;color:#b22020;animation:shake .35s}
+.card.solved{border-color:#43be6b;background:linear-gradient(#f4fff7,#e4f9ea)}
+.card.solved .word{color:#176d39}
+.card.solved::after{
+  content:"✓ أحسنتِ";margin-top:12px;color:#16964a;font-weight:900;font-size:17px
+}
+@keyframes shake{25%{transform:translateX(-7px)}50%{transform:translateX(7px)}75%{transform:translateX(-5px)}}
+@keyframes pop{50%{transform:scale(1.08)}}
+.controls{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:20px}
+.toast{
+  position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(22px);
+  opacity:0;background:#2b2b2b;color:#fff;padding:11px 18px;border-radius:18px;transition:.22s;z-index:60
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.overlay{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;padding:18px;z-index:70}
+.overlay.show{display:flex}
+.modal{
+  width:min(500px,96vw);background:#fffdf7;border-radius:28px;padding:28px;text-align:center;
+  border:4px solid #ffd86b;box-shadow:0 25px 70px #0005
+}
+.modal h2{font-size:32px;margin:0 0 8px}.stars{font-size:48px;margin:8px}
+.modal .btn{min-width:150px}
+.confetti{position:fixed;top:-20px;width:10px;height:16px;z-index:80;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(760deg);opacity:.25}}
+@media(max-width:700px){
+  .title{font-size:25px;padding:8px 22px}.instruction{font-size:15px}
+  .board{padding:13px}.card{flex:0 0 calc(50% - 8px);min-height:190px;padding:13px}
+  .word{font-size:31px}.option{min-width:52px;height:50px;font-size:22px}
+}
+@media(max-width:460px){
+  .card{flex:0 0 100%}.top{align-items:flex-start}.status{font-size:13px}
+}
+</style>
+</head>
+<body>
+<div class="game">
+  <div class="top">
+    <button class="btn back" onclick="goBack()">🏠 العودة للدرس</button>
+    <div class="status">⭐ النقاط: <span id="score">0</span> | <span id="progress">0/5</span></div>
+  </div>
+
+  <div class="title">أكملي الكلمة</div>
+  <div class="instruction">اختاري الحرف الناقص لإكمال الكلمة الصحيحة.</div>
+
+  <div class="board">
+    <div class="cards" id="cards"></div>
+
+    <div class="controls">
+      <button class="btn retry" onclick="resetGame()">↻ إعادة المحاولة</button>
+      <button class="btn sound" id="soundBtn" onclick="toggleSound()">🔊 الأصوات مفعلة</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h2>أحسنتِ يا بطلة! 🎉</h2>
+    <div class="stars">⭐⭐⭐</div>
+    <p id="finalText"></p>
+    <div class="controls">
+      <button class="btn retry" onclick="resetGame()">إعادة اللعب</button>
+      <button class="btn back" onclick="goBack()">🏠 العودة للدرس</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const QUESTIONS = [
+  {before:"غرا", after:"", answer:"ب", options:["ب","ت","ث"], full:"غراب"},
+  {before:"جر", after:"", answer:"ة", options:["ة","ه","ت"], full:"جرة"},
+  {before:"ما", after:"", answer:"ء", options:["ء","ا","ي"], full:"ماء"},
+  {before:"حجار", after:"", answer:"ة", options:["ة","ت","ه"], full:"حجارة"},
+  {before:"منقا", after:"", answer:"ر", options:["ر","ز","د"], full:"منقار"}
+];
+
+let score=0,done=0,soundOn=true;
+const $=id=>document.getElementById(id);
+
+function render(){
+  $("cards").innerHTML="";
+  QUESTIONS.forEach((q,i)=>{
+    const card=document.createElement("div");
+    card.className="card";
+    card.dataset.i=i;
+
+    const word=document.createElement("div");
+    word.className="word";
+    word.innerHTML=`${q.before}<span class="blank" id="blank-${i}">ـ</span>${q.after}`;
+
+    const opts=document.createElement("div");
+    opts.className="options";
+
+    q.options.forEach(ch=>{
+      const b=document.createElement("button");
+      b.className="option";
+      b.textContent=ch;
+      b.onclick=()=>answer(i,ch,b,card);
+      opts.appendChild(b);
+    });
+
+    card.appendChild(word);
+    card.appendChild(opts);
+    $("cards").appendChild(card);
+  });
+}
+
+function answer(i,ch,button,card){
+  if(card.classList.contains("solved"))return;
+  const q=QUESTIONS[i];
+
+  if(ch===q.answer){
+    button.classList.add("good");
+    card.classList.add("solved");
+    $(`blank-${i}`).textContent=ch;
+    card.querySelectorAll(".option").forEach(x=>x.disabled=true);
+    score+=20;done++;
+    updateStatus();
+    successSound();
+    speak(q.full);
+    showToast(`أحسنتِ 🌟 ${q.full}`);
+    if(done===QUESTIONS.length)setTimeout(finishGame,500);
+  }else{
+    button.classList.add("bad");
+    errorSound();
+    showToast("جرّبي حرفاً آخر");
+    setTimeout(()=>button.classList.remove("bad"),500);
+  }
+}
+
+function updateStatus(){
+  $("score").textContent=score;
+  $("progress").textContent=`${done}/${QUESTIONS.length}`;
+}
+
+function resetGame(){
+  score=0;done=0;
+  $("overlay").classList.remove("show");
+  updateStatus();
+  render();
+}
+
+function finishGame(){
+  $("finalText").textContent=`رائع! أكملتِ الكلمات الخمس وحصلتِ على ${score} نقطة.`;
+  $("overlay").classList.add("show");
+  confetti();
+  successSound();
+}
+
+function toggleSound(){
+  soundOn=!soundOn;
+  $("soundBtn").textContent=soundOn?"🔊 الأصوات مفعلة":"🔇 الأصوات متوقفة";
+}
+
+function speak(t){
+  if(!soundOn||!("speechSynthesis"in window))return;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(t);
+  u.lang="ar-SA";u.rate=.82;u.pitch=1.02;
+  speechSynthesis.speak(u);
+}
+
+function tone(f,d=.09,type="sine"){
+  if(!soundOn)return;
+  try{
+    const C=window.AudioContext||window.webkitAudioContext,
+      c=new C(),o=c.createOscillator(),g=c.createGain();
+    o.frequency.value=f;o.type=type;g.gain.value=.07;o.connect(g);g.connect(c.destination);
+    o.start();g.gain.exponentialRampToValueAtTime(.001,c.currentTime+d);o.stop(c.currentTime+d);
+  }catch(e){}
+}
+function successSound(){[523,659,784].forEach((f,i)=>setTimeout(()=>tone(f,.1),i*85))}
+function errorSound(){tone(175,.16,"sawtooth")}
+
+function confetti(){
+  for(let i=0;i<65;i++){
+    setTimeout(()=>{
+      const c=document.createElement("i");
+      c.className="confetti";
+      c.style.left=Math.random()*100+"vw";
+      c.style.background=["#f44336","#ffca28","#4caf50","#2196f3","#9c27b0"][Math.floor(Math.random()*5)];
+      c.style.animationDuration=(1.4+Math.random()*1.7)+"s";
+      document.body.appendChild(c);
+      setTimeout(()=>c.remove(),3400);
+    },i*18);
+  }
+}
+
+function showToast(t){
+  const x=$("toast");x.textContent=t;x.classList.add("show");
+  clearTimeout(x._t);x._t=setTimeout(()=>x.classList.remove("show"),1800);
+}
+
+function goBack(){
+  if(window.history.length>1) history.back();
+  else window.location.href = '/lesson/4/practice/games';
+}
+
+resetGame();
+</script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg5" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#e0f2fe"/>
+      <stop offset="100%" stop-color="#ffffff"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" rx="20" fill="url(#bg5)"/>
+  <!-- Cute Factory Background Roof -->
+  <path d="M50 160 L120 100 L190 160 L260 100 L330 160 L330 250 L50 250 Z" fill="#38bdf8" opacity="0.2"/>
+  <rect x="70" y="140" width="240" height="110" fill="#ffffff" stroke="#38bdf8" stroke-width="4" rx="12"/>
+  <!-- Factory Roof Triangles -->
+  <polygon points="70,140 120,90 150,140" fill="#0284c7"/>
+  <polygon points="150,140 200,90 230,140" fill="#38bdf8"/>
+  <polygon points="230,140 280,90 310,140" fill="#0284c7"/>
+  <!-- Big Milk Bottle -->
+  <g transform="translate(130, 110)">
+    <rect x="30" y="10" width="40" height="15" fill="#e2e8f0" rx="4"/>
+    <rect x="25" y="25" width="50" height="15" fill="#38bdf8" rx="4"/>
+    <path d="M25 40 L15 60 L15 130 C15 140 85 140 85 130 L85 60 L75 40 Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="4"/>
+    <!-- Milk label -->
+    <rect x="20" y="70" width="60" height="40" fill="#fef08a" rx="6"/>
+    <circle cx="50" cy="90" r="12" fill="#38bdf8"/>
+    <text x="44" y="96" font-size="14" fill="#ffffff">🥛</text>
+  </g>
+  <!-- Cheese Wedge -->
+  <g transform="translate(250, 180)">
+    <polygon points="10,40 70,10 80,50 10,60" fill="#fde047" stroke="#f59e0b" stroke-width="3"/>
+    <circle cx="35" cy="40" r="6" fill="#f59e0b" opacity="0.6"/>
+    <circle cx="55" cy="30" r="4" fill="#f59e0b" opacity="0.6"/>
+    <circle cx="60" cy="45" r="5" fill="#f59e0b" opacity="0.6"/>
+  </g>
+  <!-- Sparkles & Emojis -->
+  <text x="40" y="90" font-size="36">🐄</text>
+  <text x="60" y="220" font-size="32">🧀</text>
+  <text x="320" y="80" font-size="32">✨</text>
+  <text x="330" y="220" font-size="32">🥛</text>
+</svg>

@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg6" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fef3c7"/>
+      <stop offset="100%" stop-color="#d1fae5"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" rx="20" fill="url(#bg6)"/>
+  <!-- Desert / Country Path -->
+  <path d="M-10 220 Q180 180 410 230 L410 300 L-10 300 Z" fill="#fde047" opacity="0.6"/>
+  <!-- Cute Juha Character -->
+  <g transform="translate(220, 90)">
+    <!-- Turban -->
+    <ellipse cx="40" cy="35" rx="30" ry="20" fill="#ffffff" stroke="#cbd5e1" stroke-width="3"/>
+    <ellipse cx="40" cy="25" rx="22" ry="14" fill="#38bdf8"/>
+    <!-- Face -->
+    <circle cx="40" cy="55" r="20" fill="#fde68a"/>
+    <!-- Eyes -->
+    <circle cx="33" cy="50" r="3" fill="#000000"/>
+    <circle cx="47" cy="50" r="3" fill="#000000"/>
+    <!-- Smile & Beard -->
+    <path d="M33 60 Q40 68 47 60" stroke="#000000" stroke-width="2" fill="none"/>
+    <path d="M22 60 Q40 85 58 60 Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <!-- Robe -->
+    <path d="M15 75 L65 75 L75 160 L5 160 Z" fill="#10b981"/>
+    <rect x="25" y="75" width="30" height="85" fill="#ec4899"/>
+  </g>
+  <!-- Cute Donkey -->
+  <g transform="translate(80, 130)">
+    <!-- Body -->
+    <ellipse cx="60" cy="70" rx="45" ry="30" fill="#94a3b8"/>
+    <!-- Legs -->
+    <rect x="30" y="90" width="10" height="50" fill="#64748b" rx="4"/>
+    <rect x="50" y="90" width="10" height="50" fill="#64748b" rx="4"/>
+    <rect x="75" y="90" width="10" height="50" fill="#64748b" rx="4"/>
+    <rect x="95" y="90" width="10" height="50" fill="#64748b" rx="4"/>
+    <!-- Head & Ears -->
+    <path d="M100 50 L125 15 Q140 25 125 55 Z" fill="#64748b"/>
+    <ellipse cx="110" cy="45" rx="20" ry="16" fill="#94a3b8"/>
+    <ellipse cx="120" cy="50" rx="10" ry="8" fill="#f1f5f9"/>
+    <!-- Eye & Snout -->
+    <circle cx="105" cy="42" r="3" fill="#000000"/>
+    <circle cx="124" cy="50" r="2" fill="#000000"/>
+    <!-- Tail -->
+    <path d="M18 70 Q0 80 10 100" stroke="#64748b" stroke-width="4" fill="none"/>
+  </g>
+  <!-- Number 10 Balloon -->
+  <circle cx="340" cy="70" r="28" fill="#ef4444"/>
+  <text x="323" y="78" font-size="24" fill="#ffffff" font-weight="bold">10</text>
+  <line x1="340" y1="98" x2="330" y2="150" stroke="#ef4444" stroke-width="2"/>
+  <!-- Emojis & Palm -->
+  <text x="30" y="100" font-size="32">🌴</text>
+  <text x="320" y="220" font-size="28">🫏</text>
+  <text x="170" y="60" font-size="28">✨</text>
+</svg>

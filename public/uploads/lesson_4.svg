@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg4" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fef3c7"/>
+      <stop offset="100%" stop-color="#e0f2fe"/>
+    </linearGradient>
+    <linearGradient id="pot" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#d97706"/>
+      <stop offset="50%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#b45309"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" rx="20" fill="url(#bg4)"/>
+  <!-- Ground -->
+  <path d="M-10 240 Q150 230 410 240 L410 300 L-10 300 Z" fill="#fde047" opacity="0.6"/>
+  <!-- Water Pitcher (Jar / Jarra) -->
+  <path d="M210 120 L250 120 C240 140 280 170 270 230 C260 260 200 260 190 230 C180 170 220 140 210 120 Z" fill="url(#pot)"/>
+  <!-- Water Level inside Pitcher -->
+  <path d="M205 170 Q230 165 255 170 Q265 210 250 240 Q210 250 210 240 Z" fill="#38bdf8" opacity="0.8"/>
+  <ellipse cx="230" cy="170" rx="25" ry="6" fill="#0284c7"/>
+  <!-- Pebbles / Stones on Ground -->
+  <ellipse cx="140" cy="255" rx="12" ry="8" fill="#64748b"/>
+  <ellipse cx="160" cy="260" rx="10" ry="7" fill="#475569"/>
+  <ellipse cx="120" cy="262" rx="8" ry="5" fill="#94a3b8"/>
+  <ellipse cx="290" cy="255" rx="14" ry="9" fill="#64748b"/>
+  <ellipse cx="310" cy="260" rx="10" ry="6" fill="#475569"/>
+  <!-- Clever Crow -->
+  <g transform="translate(100, 110)">
+    <!-- Body -->
+    <ellipse cx="20" cy="30" rx="30" ry="20" fill="#1e293b"/>
+    <!-- Head -->
+    <circle cx="45" cy="15" r="16" fill="#0f172a"/>
+    <!-- Eye -->
+    <circle cx="48" cy="12" r="4" fill="#ffffff"/>
+    <circle cx="49" cy="12" r="2" fill="#000000"/>
+    <!-- Beak holding pebble -->
+    <polygon points="58,15 75,20 60,26" fill="#f59e0b"/>
+    <ellipse cx="74" cy="24" rx="6" ry="4" fill="#64748b"/>
+    <!-- Wing -->
+    <path d="M5 30 Q25 15 35 35 Q15 45 5 30 Z" fill="#334155"/>
+    <!-- Tail -->
+    <polygon points="-5,30 -25,20 -20,40" fill="#0f172a"/>
+    <!-- Legs -->
+    <line x1="15" y1="50" x2="10" y2="70" stroke="#f59e0b" stroke-width="3"/>
+    <line x1="28" y1="50" x2="25" y2="70" stroke="#f59e0b" stroke-width="3"/>
+  </g>
+  <!-- Drops & Sparkles -->
+  <text x="240" y="90" font-size="28">💧</text>
+  <text x="50" y="80" font-size="32">☀️</text>
+  <text x="320" y="110" font-size="28">💡</text>
+</svg>

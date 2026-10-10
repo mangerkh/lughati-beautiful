@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>لعبة الذاكرة - صِلي الكلمة بمعناها</title>
+<style>
+*{box-sizing:border-box}
+:root{
+  --blue:#2f9ee9; --green:#27b568; --orange:#f28a2e; --pink:#ef6cae;
+  --purple:#8f6be9; --cream:#fff7e8; --ink:#30251f;
+}
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:Tahoma,Arial,sans-serif;
+  color:var(--ink);
+  background:
+    radial-gradient(circle at 10% 15%,rgba(255,255,255,.75) 0 3%,transparent 3.2%),
+    radial-gradient(circle at 88% 12%,rgba(255,255,255,.55) 0 2.5%,transparent 2.8%),
+    linear-gradient(#82d7ff 0 34%,#def7ff 34% 49%,#97dd69 49% 72%,#f4cf86 72%);
+  overflow-x:hidden;
+}
+.game{max-width:1040px;margin:auto;min-height:100vh;padding:14px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.btn{
+  border:0;border-radius:18px;padding:11px 17px;color:#fff;font-weight:900;cursor:pointer;
+  box-shadow:0 5px 0 rgba(0,0,0,.18);transition:.15s;
+  font-family:Tahoma,Arial,sans-serif;direction:rtl;white-space:nowrap;
+}
+.btn:hover{transform:translateY(-2px)}
+.back{background:linear-gradient(#39a7f1,#167dc5)}
+.retry{background:linear-gradient(#3fa8f0,#1a80c5)}
+.sound{background:linear-gradient(#7b8793,#5f6873)}
+.status{
+  background:#874718;color:#fff;border:3px solid #fff0d2;border-radius:18px;
+  padding:9px 14px;font-weight:900
+}
+.title{
+  width:max-content;max-width:94%;margin:14px auto 8px;padding:10px 34px;
+  background:linear-gradient(#ffe89a,#f5b856);border:4px solid #99531d;border-radius:20px;
+  font-size:31px;font-weight:900;box-shadow:0 6px 0 #7b3d13
+}
+.instruction{
+  max-width:850px;margin:0 auto 18px;background:#fff5dc;border:3px solid #efc27b;
+  border-radius:20px;padding:12px 18px;text-align:center;font-size:18px;font-weight:800;line-height:1.8
+}
+.board{
+  max-width:920px;margin:auto;background:rgba(255,255,255,.94);border:3px solid #efbd77;
+  border-radius:28px;padding:20px;box-shadow:0 15px 38px #0002
+}
+.info-row{
+  display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:16px
+}
+.badge{
+  background:#fff7e8;border:2px solid #efbd77;border-radius:16px;padding:8px 14px;font-weight:900
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(5, minmax(0,1fr));
+  gap:12px;
+}
+.card{
+  position:relative;
+  min-height:125px;
+  perspective:900px;
+  cursor:pointer;
+  user-select:none;
+}
+.card-inner{
+  position:absolute;inset:0;
+  transition:transform .42s cubic-bezier(.2,.7,.2,1);
+  transform-style:preserve-3d;
+}
+.card.flipped .card-inner,
+.card.matched .card-inner{transform:rotateY(180deg)}
+.face{
+  position:absolute;inset:0;
+  border-radius:20px;
+  display:flex;align-items:center;justify-content:center;
+  padding:12px;text-align:center;
+  backface-visibility:hidden;
+  box-shadow:0 7px 0 rgba(0,0,0,.16);
+  border:3px solid rgba(255,255,255,.7);
+}
+.front{
+  background:
+    radial-gradient(circle at 70% 25%,#ffffff55 0 9%,transparent 9.5%),
+    linear-gradient(145deg,#ff9b4d,#f06c23);
+  color:white;
+  font-size:36px;
+  font-weight:900;
+}
+.front::after{
+  content:"؟";
+  width:56px;height:56px;border-radius:50%;
+  display:grid;place-items:center;
+  background:#fff;color:#e96921;font-size:34px;font-weight:900;
+  box-shadow:0 5px 0 #0002
+}
+.back{
+  transform:rotateY(180deg);
+  background:linear-gradient(#fffdf8,#f7ead4);
+  border-color:#e5bd84;
+  color:#3a291f;
+  font-size:20px;
+  font-weight:900;
+  line-height:1.55
+}
+.card.word .back{
+  background:linear-gradient(#eef8ff,#d9efff);
+  border-color:#78bff0;
+  color:#0f679f;
+  font-size:26px
+}
+.card.meaning .back{
+  background:linear-gradient(#f1fff5,#dcf7e4);
+  border-color:#79cf99;
+  color:#226d3f
+}
+.card.matched .back{
+  background:linear-gradient(#e7fbe9,#c9f1d1);
+  border-color:#35b95e;
+  color:#176a35;
+  animation:pop .35s
+}
+.card.wrong{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-7px)}50%{transform:translateX(7px)}75%{transform:translateX(-5px)}}
+@keyframes pop{50%{transform:scale(1.05)}}
+.controls{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:20px}
+.toast{
+  position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(22px);
+  opacity:0;background:#2b2b2b;color:#fff;padding:11px 18px;border-radius:18px;transition:.22s;z-index:60
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.overlay{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;padding:18px;z-index:70}
+.overlay.show{display:flex}
+.modal{
+  width:min(500px,96vw);background:#fffdf7;border-radius:28px;padding:28px;text-align:center;
+  border:4px solid #ffd86b;box-shadow:0 25px 70px #0005
+}
+.modal h2{font-size:32px;margin:0 0 8px}.stars{font-size:48px;margin:8px}
+.modal .controls .btn{min-width:150px;text-align:center}
+.modal .back{background:linear-gradient(#39a7f1,#167dc5);color:#fff}
+.confetti{position:fixed;top:-20px;width:10px;height:16px;z-index:80;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(760deg);opacity:.25}}
+@media(max-width:800px){
+  .grid{grid-template-columns:repeat(4, minmax(0,1fr))}
+}
+@media(max-width:620px){
+  .title{font-size:25px;padding:8px 22px}.instruction{font-size:15px}
+  .board{padding:13px}
+  .grid{grid-template-columns:repeat(2, minmax(0,1fr));gap:10px}
+  .card{min-height:105px}
+  .back{font-size:17px}.card.word .back{font-size:22px}
+}
+</style>
+</head>
+<body>
+<div class="game">
+  <div class="top">
+    <button class="btn back" onclick="goBack()">🏠 العودة للدرس</button>
+    <div class="status">⭐ النقاط: <span id="score">0</span> | الأزواج: <span id="progress">0/5</span></div>
+  </div>
+
+  <div class="title">ذاكرة الكلمات</div>
+  <div class="instruction">
+    افتحي بطاقتين في كل مرة، وحاولي مطابقة الكلمة مع معناها الصحيح.
+  </div>
+
+  <div class="board">
+    <div class="info-row">
+      <div class="badge">🧠 المحاولات: <span id="tries">0</span></div>
+      <div class="badge">✅ الأزواج الصحيحة: <span id="pairs">0</span></div>
+    </div>
+
+    <div class="grid" id="grid"></div>
+
+    <div class="controls">
+      <button class="btn retry" onclick="resetGame()">↻ إعادة المحاولة</button>
+      <button class="btn sound" id="soundBtn" onclick="toggleSound()">🔊 الأصوات مفعلة</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h2>أحسنتِ يا بطلة! 🎉</h2>
+    <div class="stars">⭐⭐⭐</div>
+    <p id="finalText"></p>
+    <div class="controls">
+      <button class="btn retry" onclick="resetGame()">إعادة اللعب</button>
+      <button class="btn back" onclick="goBack()">🏠 العودة للدرس</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const PAIRS = [
+  {id:1, word:"عَطِشَ", meaning:"احتاج إلى الماء."},
+  {id:2, word:"مِنقار", meaning:"فم الطائر الصلب."},
+  {id:3, word:"جَرَّة", meaning:"وعاء للماء."},
+  {id:4, word:"ارْتَفَعَ", meaning:"صار أعلى."},
+  {id:5, word:"ارْتَوى", meaning:"شرب حتى زال عطشه."}
+];
+
+let first=null,second=null,lock=false,score=0,pairsDone=0,tries=0,soundOn=true;
+const $=id=>document.getElementById(id);
+
+function shuffle(arr){return [...arr].sort(()=>Math.random()-.5)}
+
+function buildDeck(){
+  const deck=[];
+  PAIRS.forEach(p=>{
+    deck.push({pairId:p.id,type:"word",text:p.word});
+    deck.push({pairId:p.id,type:"meaning",text:p.meaning});
+  });
+  return shuffle(deck);
+}
+
+function render(){
+  $("grid").innerHTML="";
+  const deck=buildDeck();
+
+  deck.forEach((item,idx)=>{
+    const card=document.createElement("div");
+    card.className=`card ${item.type}`;
+    card.dataset.idx=idx;
+    card.dataset.pair=item.pairId;
+    card.dataset.type=item.type;
+
+    card.innerHTML=`
+      <div class="card-inner">
+        <div class="face front"></div>
+        <div class="face back">${item.text}</div>
+      </div>
+    `;
+
+    card.onclick=()=>flip(card,item);
+    $("grid").appendChild(card);
+  });
+}
+
+function flip(card,item){
+  if(lock || card.classList.contains("matched") || card===first?.card)return;
+
+  card.classList.add("flipped");
+  speak(item.text);
+
+  if(!first){
+    first={card,item};
+    return;
+  }
+
+  second={card,item};
+  tries++;
+  $("tries").textContent=tries;
+  lock=true;
+
+  const isPair =
+    first.item.pairId===second.item.pairId &&
+    first.item.type!==second.item.type;
+
+  if(isPair){
+    setTimeout(()=>{
+      first.card.classList.add("matched");
+      second.card.classList.add("matched");
+      score+=20;
+      pairsDone++;
+      updateStatus();
+      successSound();
+      showToast("أحسنتِ 🌟 مطابقة صحيحة");
+      clearTurn();
+      if(pairsDone===PAIRS.length){
+        setTimeout(finishGame,450);
+      }
+    },500);
+  }else{
+    first.card.classList.add("wrong");
+    second.card.classList.add("wrong");
+    errorSound();
+    showToast("ليستا زوجاً صحيحاً، حاولي مرة أخرى");
+    setTimeout(()=>{
+      first.card.classList.remove("flipped","wrong");
+      second.card.classList.remove("flipped","wrong");
+      clearTurn();
+    },900);
+  }
+}
+
+function clearTurn(){
+  first=null;second=null;lock=false;
+}
+
+function updateStatus(){
+  $("score").textContent=score;
+  $("pairs").textContent=pairsDone;
+  $("progress").textContent=`${pairsDone}/${PAIRS.length}`;
+}
+
+function resetGame(){
+  first=null;second=null;lock=false;score=0;pairsDone=0;tries=0;
+  $("score").textContent="0";
+  $("pairs").textContent="0";
+  $("progress").textContent=`0/${PAIRS.length}`;
+  $("tries").textContent="0";
+  $("overlay").classList.remove("show");
+  render();
+}
+
+function finishGame(){
+  $("finalText").textContent=`رائع! طابقتِ جميع الكلمات مع معانيها في ${tries} محاولة وحصلتِ على ${score} نقطة.`;
+  $("overlay").classList.add("show");
+  confetti();
+  successSound();
+}
+
+function toggleSound(){
+  soundOn=!soundOn;
+  $("soundBtn").textContent=soundOn?"🔊 الأصوات مفعلة":"🔇 الأصوات متوقفة";
+}
+
+function speak(t){
+  if(!soundOn||!("speechSynthesis"in window))return;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(t);
+  u.lang="ar-SA";
+  u.rate=.82;
+  u.pitch=1.02;
+  speechSynthesis.speak(u);
+}
+
+function tone(f,d=.09,type="sine"){
+  if(!soundOn)return;
+  try{
+    const C=window.AudioContext||window.webkitAudioContext,
+      c=new C(),o=c.createOscillator(),g=c.createGain();
+    o.frequency.value=f;
+    o.type=type;
+    g.gain.value=.07;
+    o.connect(g);g.connect(c.destination);
+    o.start();
+    g.gain.exponentialRampToValueAtTime(.001,c.currentTime+d);
+    o.stop(c.currentTime+d);
+  }catch(e){}
+}
+
+function successSound(){
+  [523,659,784].forEach((f,i)=>setTimeout(()=>tone(f,.1),i*85));
+}
+function errorSound(){
+  tone(175,.16,"sawtooth");
+}
+
+function confetti(){
+  for(let i=0;i<65;i++){
+    setTimeout(()=>{
+      const c=document.createElement("i");
+      c.className="confetti";
+      c.style.left=Math.random()*100+"vw";
+      c.style.background=["#f44336","#ffca28","#4caf50","#2196f3","#9c27b0"][Math.floor(Math.random()*5)];
+      c.style.animationDuration=(1.4+Math.random()*1.7)+"s";
+      document.body.appendChild(c);
+      setTimeout(()=>c.remove(),3400);
+    },i*18);
+  }
+}
+
+function showToast(t){
+  const x=$("toast");
+  x.textContent=t;
+  x.classList.add("show");
+  clearTimeout(x._t);
+  x._t=setTimeout(()=>x.classList.remove("show"),1800);
+}
+
+function goBack(){
+  if(window.history.length>1) history.back();
+  else window.location.href = '/lesson/4/practice/games';
+}
+
+resetGame();
+</script>
+</body>
+</html>

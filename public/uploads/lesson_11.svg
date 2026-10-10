@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg11" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#bae6fd"/>
+      <stop offset="60%" stop-color="#e0f2fe"/>
+      <stop offset="100%" stop-color="#0284c7"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" rx="20" fill="url(#bg11)"/>
+  <!-- Sea Waves -->
+  <path d="M-10 180 Q100 160 200 180 Q300 200 410 180 L410 300 L-10 300 Z" fill="#0284c7" opacity="0.8"/>
+  <path d="M-10 210 Q100 230 200 210 Q300 190 410 210 L410 300 L-10 300 Z" fill="#0369a1"/>
+  <!-- Fisherman Boat -->
+  <g transform="translate(60, 120)">
+    <path d="M10 50 L150 50 L120 90 L40 90 Z" fill="#b45309" stroke="#78350f" stroke-width="3"/>
+    <!-- Fisherman -->
+    <circle cx="60" cy="20" r="14" fill="#fde68a"/>
+    <!-- Straw Hat -->
+    <path d="M30 15 L90 15 L60 0 Z" fill="#f59e0b"/>
+    <!-- Body -->
+    <rect x="48" y="34" width="24" height="20" fill="#38bdf8"/>
+    <!-- Fishing Rod -->
+    <line x1="70" y1="35" x2="220" y2="-20" stroke="#78350f" stroke-width="4"/>
+    <line x1="220" y1="-20" x2="220" y2="110" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="4 2"/>
+  </g>
+  <!-- Happy Fish in Water -->
+  <g transform="translate(260, 220)">
+    <ellipse cx="20" cy="15" rx="20" ry="12" fill="#ef4444"/>
+    <polygon points="40,15 55,5 55,25" fill="#ef4444"/>
+    <circle cx="10" cy="12" r="3" fill="#ffffff"/>
+    <circle cx="9" cy="12" r="1.5" fill="#000000"/>
+  </g>
+  <g transform="translate(180, 245)">
+    <ellipse cx="20" cy="15" rx="16" ry="10" fill="#f59e0b"/>
+    <polygon points="36,15 48,7 48,23" fill="#f59e0b"/>
+    <circle cx="10" cy="12" r="2.5" fill="#ffffff"/>
+  </g>
+  <!-- Emojis & Seagulls -->
+  <path d="M50 50 Q60 40 70 50 Q80 40 90 50" stroke="#ffffff" stroke-width="3" fill="none"/>
+  <path d="M120 70 Q130 60 140 70 Q150 60 160 70" stroke="#ffffff" stroke-width="3" fill="none"/>
+  <text x="320" y="80" font-size="32">⚓</text>
+  <text x="330" y="240" font-size="32">🐟</text>
+</svg>
